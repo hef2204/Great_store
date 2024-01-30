@@ -1,10 +1,11 @@
 from flask import Flask
-from user import user_blueprint
-from product import product_blueprint
+from views.user import bp as user_blueprint
+from views.product import bp as product_blueprint
 
 app = Flask(__name__)
 app.register_blueprint(user_blueprint)
 app.register_blueprint(product_blueprint)
+app.register_blueprint(product_blueprint, url_prefix="/products", name="products")
 
 
 
