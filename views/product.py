@@ -11,21 +11,21 @@ def product_list():
     db = sqlite3.connect("data.db")
     cursor = db.cursor()
     cursor.execute("SELECT id, title, description, price, image FROM products")
-    data = cursor.fetchall()
+    data = cursor.fetchall()  # List of tuples - tuple = row in table
     product_list = []
     for item in data:
-        product = Product(
-            id=item[0],
-            title=item[1],
-            description=item[2],
-            price=item[3],
-            image=item[4],
-        )
+        product = {
+            "id": item[0],
+            "title": item[1],
+            "description": item[2],
+            "price": item[3],
+            "image": item[4],
+        }
         product_list.append(product)
     return render_template("product-list.html", products=product_list)
 
 
-@bp.route("/<product_id>")
+@bp.route("/products/<product_id>")
 def product_page(product_id):
     db = sqlite3.connect("data.db")
     cursor = db.cursor()
@@ -35,25 +35,25 @@ def product_page(product_id):
     )
     data = cursor.fetchone()
     if data:
-        product = Product(
-            id=data[0],
-            title=data[1],
-            description=data[2],
-            price=data[3],
-            image=data[4],
-        )
+        product = {
+            "id": data[0],
+            "title": data[1],
+            "description": data[2],
+            "price": data[3],
+            "image": data[4],
+        }
         return render_template("product.html", product=product)
     else:
         return "PRODUCT NOT FOUND"
 
 @bp.route("/create", methods=["GET", "POST"])
-def product_create():
-    if request.method == "GET":
-        return "Product create form"
-    elif request.method == "POST":
-        new_product = ProductCreate("new product name", 1.0, 1, "nothing")
-        print(f"Creating product: {new_product}")
-        return "Created product successfully"
+def product_create_form():
+    db = sqlite3.connect("data.db")
+    cursor = db.cursor()
+    cursor.execute("SELECT DISTINCT category FROM products")
+    data = cursor.fetchall()
+    # categories = [row[0] for row in data]
+    return render_template("product-create.html", categories=data)
 
 
 @bp.route("/<int:product_id>", methods=["DELETE"])
@@ -67,3 +67,5 @@ def product_update(product_id):
     print(f"Updated product {product_id} with data {updated_product}")
     product_page_url = url_for("product.product_page", product_id=product_id)
     return redirect(product_page_url)
+
+

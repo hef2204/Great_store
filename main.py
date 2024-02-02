@@ -8,11 +8,6 @@ app.register_blueprint(user_blueprint)
 app.register_blueprint(product_blueprint)
 app.register_blueprint(product_blueprint, url_prefix="/products", name="products")
 
-# @app.route("/")
-# def main_page():
-#     return product_list()
-
-# app.route("/")(product_list)
 
 @app.route("/")
 def main_page():
