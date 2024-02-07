@@ -46,7 +46,7 @@ def product_page(product_id):
     else:
         return "PRODUCT NOT FOUND"
 
-@bp.route("/create", methods=["GET", "POST"])
+@bp.route("/create_product", methods=["GET", "POST"])
 def product_create_form():
     db = sqlite3.connect("data.db")
     cursor = db.cursor()
@@ -56,9 +56,6 @@ def product_create_form():
     return render_template("product-create.html", categories=data)
 
 
-@bp.route("/<int:product_id>", methods=["DELETE"])
-def product_delete(product_id):
-    return f"Deleted product successfully {product_id}"
 
 
 @bp.route("/<int:product_id>", methods=["PATCH"])
@@ -67,5 +64,36 @@ def product_update(product_id):
     print(f"Updated product {product_id} with data {updated_product}")
     product_page_url = url_for("product.product_page", product_id=product_id)
     return redirect(product_page_url)
+
+@bp.route('/create_product/submit', methods=['POST'])
+def product_create_submit():
+    db = sqlite3.connect("data.db")
+    cursor = db.cursor()
+    if request.method == "POST":
+        new_product = ProductCreate(
+            title=request.form["title"],
+            price=request.form["price"],
+            description=request.form["description"],
+            image=request.form["image"],
+            category=request.form["category"]
+        )
+        cursor.execute("INSERT INTO products (title, price, description, image, category) VALUES (?, ?, ?, ?, ?)",
+                       (new_product.title, new_product.price, new_product.description, new_product.image, new_product.category))
+        db.commit()
+        return redirect(url_for("product.product_list"))
+
+@bp.route('/delete/<product_id>')
+def delete_product(product_id):
+    db = sqlite3.connect("data.db")
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM products WHERE id = ?", [product_id])
+    if cursor.rowcount == 1:
+        db.commit()
+        return ("success", 200)
+    if cursor.rowcount == 0:
+        return ("", 404)
+    return ("", 500)
+
+
 
 

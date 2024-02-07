@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from flask_sqlalchemy import SQLAlchemy
 
 
 @dataclass
@@ -7,12 +8,11 @@ class ProductCreate:
     price: float
     description: str
     image: str
-    # amount: int
-    # category: str
+    category: str
 
     def add_product_to_db(self) -> int:
-        # cursor.execute("INSERT...")
         pass
+        
 
 
 @dataclass
