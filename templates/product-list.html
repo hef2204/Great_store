@@ -1,119 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MySales - Products List</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f8f8f8;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 12px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #3498db;
-      color: #fff;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-
-    img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-    }
-
-    button {
-      background-color: #4caf50;
-      color: #fff;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #45a049;
-    }
-
-    form {
-      display: inline;
-    }
-
-    form button {
-      background-color: #e74c3c;
-    }
-
-    form button:hover {
-      background-color: #c0392b;
-    }
-  </style>
-</head>
-<body>
-  <table>
-    <tr>
-      <th>Title</th>
-      <th>Description</th>
-      <th>Price</th>
-      <th>Image</th>
-      <th>Add to Cart</th>
-      <th>Delete Product</th>
-    </tr>
-    {% for product in products %}
-    <tr>
-      <td>{{ product.title }}</td>
-      <td>{{ product.description }}</td>
-      <td>{{ product.price }}</td>
-      <td>
-        <img src="{{ product.image }}" width="128" height="128" />
-      </td>
-      <td><button>Add to Cart</button></td>
-      <td>
-          
-          <button id="{{ product.id }}" onclick="deleteProuct(event)">Delete Product</button>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-  <script>
-    function deleteProduct(event) {
-        let button = event.target;
-        let cell = button.parentElement;
-        let row = cell.parentElement;
-        fetch("/products/delete/" + button.id).then((response) => {
-            if (response.status == 200) {
-                row.remove();
-            }
-        });
-      }
-
-      async function deleteProductAsync(event) {
-        let button = event.target;
-        let cell = button.parentElement;
-        let row = cell.parentElement;
-        let response = await fetch("/products/delete/" + button.id);
-        if (response.status == 200) {
-            row.remove();
-        }
-      }
-
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    <title>MySales - Products List</title>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Image</th>
+        <th>Add to cart</th>
+        <th>Delete</th>
+      </tr>
+      {% for product in products %}
+      <tr>
+        <td><a href="/products/{{ product.id }}"> {{ product.title }}</a></td>
+        <td>{{ product.description }}</td>
+        <td>{{ product.price }}</td>
+        <td>
+          <img src="{{ product.image }}" width="128" height="128" />
+        </td>
+        <td>
+          <button id="{{ product.id }}" onclick="addToCart(event)">Add to cart</button>
+        </td>
+        <td>
+          <button id="{{ product.id }}" onclick="deleteProduct(event)">Delete product</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    <script src="/static/js/cart_add.js"></script>
+    <script src="/static/js/product_delete.js"></script>
+  </body>
 </html>

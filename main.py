@@ -1,17 +1,28 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, request, make_response
+from views.users import bp as users_bp
+from views.products import bp as products_bp
+from views.carts import bp as carts_bp
 
-from views.user import bp as user_blueprint
-from views.product import bp as product_blueprint
 
 app = Flask(__name__)
-app.register_blueprint(user_blueprint)
-app.register_blueprint(product_blueprint)
-app.register_blueprint(product_blueprint, url_prefix="/products", name="products")
+app.register_blueprint(users_bp)
+app.register_blueprint(products_bp)
+app.register_blueprint(carts_bp)
 
 
 @app.route("/")
 def main_page():
-    return redirect(url_for("products.product_list"))
+    print(request.cookies)
+    response = make_response("HOME PAGE")
+    response.set_cookie("user_id", "7")
+    return response
+
+
+@app.route("/logout")
+def logout():
+    response = make_response("YOU LOGGED OUT")
+    response.delete_cookie("user_id")
+    return response
 
 
 app.run(debug=True)
